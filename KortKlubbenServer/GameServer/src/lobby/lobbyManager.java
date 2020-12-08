@@ -1,4 +1,4 @@
 package lobby;
 
-public class lobbyManager {
+public class LobbyManager {
 }

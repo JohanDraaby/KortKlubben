@@ -1,4 +1,4 @@
 package game;
 
-public class goFishController {
+public class GoFishController {
 }

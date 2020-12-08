@@ -1,4 +1,4 @@
 package dal;
 
-public class dataManager {
+public class DataManager {
 }

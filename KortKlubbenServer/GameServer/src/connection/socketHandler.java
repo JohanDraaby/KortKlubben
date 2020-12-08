@@ -1,4 +1,4 @@
 package connection;
 
-public class socketHandler {
+public class SocketHandler {
 }

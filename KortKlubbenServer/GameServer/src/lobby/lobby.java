@@ -1,4 +1,4 @@
 package lobby;
 
-public class lobby {
+public class Lobby {
 }

@@ -1,4 +1,4 @@
 package game;
 
-public class gameFactory {
+public class GameFactory {
 }
