@@ -1,24 +1,28 @@
 package game;
 
 import java.util.ArrayList;
-
+/**
+ * This class is responsible for instantiating new cards
+ */
 public class CardFactory {
     /**
-     * Bla bla bla bla
-     * @param colour Black or red
-     * @return Returns a new card
+     * @param value
+     * @param suit
+     * @param colour
+     * @return Returns New {@link Card} Object
      */
     private Card CreateCard(byte value, String suit, String colour){
         return new Card(value, suit, colour);
     }
 
-    String gayAss () {
-        return "";
-    }
 
+    /**
+     *
+     * @return Returns ArrayList<{@link Card}> Containing 52 Cards
+     */
     public ArrayList<Card>CreateDeck(){
-        ArrayList<Card> deck = new ArrayList<>();
-        
+        ArrayList<Card> deck = new ArrayList();
+
         for (byte b = 1; b < 14; b++){
             deck.add(new Card(b, "Hjerter", "Rød"));
             deck.add(new Card(b, "Ruder", "Rød"));
