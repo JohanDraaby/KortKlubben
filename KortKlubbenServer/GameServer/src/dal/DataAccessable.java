@@ -1,5 +1,8 @@
 package dal;
 
 public interface DataAccessable {
-    void createUser();
+    boolean createUser();
+    String readUser();
+    boolean updateUser();
+    boolean deleteUser();
 }
