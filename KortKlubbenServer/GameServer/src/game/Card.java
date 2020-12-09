@@ -11,7 +11,7 @@ public class Card {
 
     /**
      *
-     * @return Value of {@link Card}
+     * @return value of {@link Card}
      */
     public int getValue(){
         return this.value;
@@ -19,7 +19,7 @@ public class Card {
 
     /**
      *
-     * @return Suit of {@link Card}
+     * @return suit of {@link Card}
      */
     public String getSuit(){
         return this.suit;
@@ -27,7 +27,7 @@ public class Card {
 
     /**
      *
-     * @return Colour of {@link Card}
+     * @return colour of {@link Card}
      */
     public String getColour(){
         return this.colour;
@@ -35,7 +35,7 @@ public class Card {
 
     /**
      *
-     * @return FullName of {@link Card}
+     * @return fullName of {@link Card}
      */
     public String getFullName(){
         return this.fullName;
