@@ -1,6 +1,7 @@
 package dal;
 
 import java.sql.*;
+import
 
 /**
  * handles user CRUDs
@@ -16,6 +17,14 @@ public class DataManager implements DataAccessable{
 
         boolean creationSuccessful = false;
 
+        Connection conn = DriverManager.getConnection("jbdc:default:connection", "root", "P@ssw0rd");;
+
+        try {
+            CallableStatement cs = conn.prepareCall("{CALL CreateUser(?,?,?)}");
+        }
+        catch (SQLException e) {
+
+        }
 
 
         return creationSuccessful;
