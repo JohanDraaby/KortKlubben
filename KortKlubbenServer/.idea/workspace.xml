@@ -3,10 +3,15 @@
   <component name="ChangeListManager">
     <list default="true" id="e16c10e0-32ff-4778-95f9-66d91ad88c91" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GameServer/src/connection/socketHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/GameServer/src/connection/SocketHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GameServer/src/game/card.java" beforeDir="false" afterPath="$PROJECT_DIR$/GameServer/src/game/Card.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GameServer/src/game/cardFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/GameServer/src/game/cardFactory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GameServer/src/game/gameController.java" beforeDir="false" afterPath="$PROJECT_DIR$/GameServer/src/game/GameController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GameServer/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/GameServer/src/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GameServer/src/dal/DataManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/GameServer/src/dal/DataManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GameServer/src/game/gameFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/GameServer/src/game/GameFactory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GameServer/src/game/goFishController.java" beforeDir="false" afterPath="$PROJECT_DIR$/GameServer/src/game/GoFishController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GameServer/src/lobby/lobby.java" beforeDir="false" afterPath="$PROJECT_DIR$/GameServer/src/lobby/Lobby.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GameServer/src/lobby/lobbyFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/GameServer/src/lobby/LobbyFactory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GameServer/src/lobby/lobbyManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/GameServer/src/lobby/LobbyManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GameServer/src/manager.java" beforeDir="false" afterPath="$PROJECT_DIR$/GameServer/src/Manager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GameServer/src/model/user.java" beforeDir="false" afterPath="$PROJECT_DIR$/GameServer/src/model/User.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,6 +42,13 @@
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
   <component name="RunManager">
+    <configuration name="JavaApp" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="Main" />
+      <module name="KortKlubbenServer" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration default="true" type="ArquillianJUnit" factoryName="" nameIsGenerated="true">
       <option name="arquillianRunConfiguration">
         <value>
@@ -60,6 +72,8 @@
       <workItem from="1607434392634" duration="81000" />
       <workItem from="1607434529195" duration="697000" />
       <workItem from="1607435395067" duration="1432000" />
+      <workItem from="1607586128492" duration="28000" />
+      <workItem from="1607586207863" duration="4464000" />
     </task>
     <servers />
   </component>
@@ -77,11 +91,5 @@
       </map>
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
-  </component>
-  <component name="WindowStateProjectService">
-    <state x="277" y="57" key="SettingsEditor" timestamp="1607515092946">
-      <screen x="0" y="0" width="1536" height="824" />
-    </state>
-    <state x="277" y="57" key="SettingsEditor/0.0.1536.824@0.0.1536.824" timestamp="1607515092946" />
   </component>
 </project>
