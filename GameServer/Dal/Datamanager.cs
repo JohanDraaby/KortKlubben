@@ -18,7 +18,7 @@ namespace GameServer.Dal
         {
             bool userCreated = true;
 
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (conn = new SqlConnection(connectionString))
             {
                 conn.Open();
                 SqlCommand cmd = new SqlCommand("CreateUser", conn);
@@ -35,7 +35,19 @@ namespace GameServer.Dal
 
         public bool DeleteUser()
         {
-            throw new NotImplementedException();
+            bool userDeleted = true;
+
+            using (conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                SqlCommand cmd = new SqlCommand("DeleteUser", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add("@Username", SqlDbType.VarChar).Value = "usernameTest";
+
+                cmd.ExecuteNonQuery();
+            }
+
+            return userDeleted;
         }
 
         public string ReadUser()

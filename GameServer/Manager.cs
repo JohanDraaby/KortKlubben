@@ -10,7 +10,7 @@ namespace GameServer
     class Manager
     {
         Datamanager dm = new Datamanager();
-        public void dsadas ()
+        public void DBTest ()
         {
             dm.CreateUser();
         }

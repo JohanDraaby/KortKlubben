@@ -5,3 +5,10 @@ C:\Users\vicdin\source\repos\GameServer\obj\Debug\GameServer.csprojAssemblyRefer
 C:\Users\vicdin\source\repos\GameServer\obj\Debug\GameServer.csproj.CoreCompileInputs.cache
 C:\Users\vicdin\source\repos\GameServer\obj\Debug\GameServer.exe
 C:\Users\vicdin\source\repos\GameServer\obj\Debug\GameServer.pdb
+C:\Users\joha5255\source\repos\KortKlubben\GameServer\obj\Debug\GameServer.csprojAssemblyReference.cache
+C:\Users\joha5255\source\repos\KortKlubben\GameServer\obj\Debug\GameServer.csproj.CoreCompileInputs.cache
+C:\Users\joha5255\source\repos\KortKlubben\GameServer\obj\Debug\GameServer.exe
+C:\Users\joha5255\source\repos\KortKlubben\GameServer\obj\Debug\GameServer.pdb
+C:\Users\joha5255\source\repos\KortKlubben\GameServer\bin\Debug\GameServer.exe.config
+C:\Users\joha5255\source\repos\KortKlubben\GameServer\bin\Debug\GameServer.exe
+C:\Users\joha5255\source\repos\KortKlubben\GameServer\bin\Debug\GameServer.pdb
