@@ -3,10 +3,10 @@ DROP TABLE Users;
 DROP database CardDb;
 CREATE database CardDb;
 
-USE CardDb;
+USE CardDB;
 
 CREATE TABLE Users (
-    ID int IDENTITY,
+    ID int IDENTITY(1,1) NOT NULL,
     Username varchar(255),
     Password varchar(255),
     Mail varchar(255),
