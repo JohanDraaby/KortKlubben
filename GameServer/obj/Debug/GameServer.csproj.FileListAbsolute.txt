@@ -12,3 +12,6 @@ C:\Users\joha5255\source\repos\KortKlubben\GameServer\obj\Debug\GameServer.pdb
 C:\Users\joha5255\source\repos\KortKlubben\GameServer\bin\Debug\GameServer.exe.config
 C:\Users\joha5255\source\repos\KortKlubben\GameServer\bin\Debug\GameServer.exe
 C:\Users\joha5255\source\repos\KortKlubben\GameServer\bin\Debug\GameServer.pdb
+C:\Users\joha5255\source\repos\KortKlubben\GameServer\bin\Debug\Newtonsoft.Json.dll
+C:\Users\joha5255\source\repos\KortKlubben\GameServer\bin\Debug\Newtonsoft.Json.xml
+C:\Users\joha5255\source\repos\KortKlubben\GameServer\obj\Debug\GameServer.csproj.CopyComplete

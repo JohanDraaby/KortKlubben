@@ -33,6 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -44,25 +47,27 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Connection\ICommunicate.cs" />
+    <Compile Include="Game\IConvertable.cs" />
+    <Compile Include="Game\JsonConverter.cs" />
     <Compile Include="Connection\SocketHandler.cs" />
     <Compile Include="Dal\IDataAccess.cs" />
-    <Compile Include="Dal\Datamanager.cs" />
+    <Compile Include="Dal\DataManager.cs" />
     <Compile Include="Game\Card.cs" />
     <Compile Include="Game\CardFactory.cs" />
-    <Compile Include="Game\Game.cs" />
+    <Compile Include="Game\CardGame.cs" />
     <Compile Include="Game\GameController.cs" />
-    <Compile Include="Game\GameFactory.cs" />
+    <Compile Include="Game\GameRequest.cs" />
     <Compile Include="Game\GoFishController.cs" />
-    <Compile Include="Lobby\Lobby.cs" />
-    <Compile Include="Lobby\LobbyFactory.cs" />
+    <Compile Include="Lobby\GameLobby.cs" />
     <Compile Include="Lobby\LobbyManager.cs" />
-    <Compile Include="Manager.cs" />
+    <Compile Include="RequestManager.cs" />
     <Compile Include="Model\User.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

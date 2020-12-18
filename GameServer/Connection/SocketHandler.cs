@@ -30,5 +30,27 @@ namespace GameServer.Connection
         {
             throw new NotImplementedException();
         }
+
+        public void HandleConnections()
+        {
+            tcpClients = new List<User>();
+
+            int count = 1;
+
+            TcpListener ServerSocket = new TcpListener(IPAddress.Any, 5000);
+
+            ServerSocket.Start();
+
+            while (true)
+            {
+                TcpClient client = ServerSocket.AcceptTcpClient();
+                lock (_lock) list_clients.Add(count, client);
+                Console.WriteLine("Someone connected!!");
+
+                Thread t = new Thread(SetUpGame);
+                t.Start(count);
+                count++;
+            }
+        }
     }
 }

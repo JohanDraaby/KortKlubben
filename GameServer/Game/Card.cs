@@ -6,57 +6,35 @@ using System.Threading.Tasks;
 
 namespace GameServer.Game
 {
-    class Card
+    public class Card
     {
         private byte value;
+        public byte Value
+        {
+            get { return value; }
+        }
+
         private string suit;
+        public string Suit
+        {
+            get { return suit; }
+            set { suit = value; }
+        }
+
         private string colour;
+        public string Colour
+        {
+            get { return colour; }
+        }
+
         private string fullName;
-
-        /**
-         *
-         * @return value of {@link Card}
-         */
-        public int getValue()
+        public string FullName
         {
-            return this.value;
+            get { return fullName; }
+            set { fullName = value; }
         }
 
-        /**
-         *
-         * @return suit of {@link Card}
-         */
-        public string getSuit()
-        {
-            return this.suit;
-        }
 
-        /**
-         *
-         * @return colour of {@link Card}
-         */
-        public string getColour()
-        {
-            return this.colour;
-        }
-
-        /**
-         *
-         * @return fullName of {@link Card}
-         */
-        public string getFullName()
-        {
-            return this.fullName;
-        }
-
-        /**
-         * Sets a new name to the {@link Card}
-         * @param newName
-         */
-        public void setFullName(string newName)
-        {
-            this.fullName = newName;
-        }
 
         /// <summary>
         /// Used To Initiate An Object Of Type <see cref="Card"/>
@@ -64,29 +42,29 @@ namespace GameServer.Game
         public Card(byte value, string suit, string colour)
         {
             this.value = value;
-            this.suit = suit;
-            this.fullName = suit + " ";
+            Suit = suit;
+            FullName = suit + " ";
             this.colour = colour;
 
             switch (value)
             {
                 case 1:
-                    this.fullName += "Es";
+                    FullName += "Es";
                     break;
                 case 11:
-                    this.fullName += "Knægt";
+                    FullName += "Knægt";
                     break;
                 case 12:
-                    this.fullName += "Dame";
+                    FullName += "Dame";
                     break;
                 case 13:
-                    this.fullName += "Konge";
+                    FullName += "Konge";
                     break;
                 case 14:
-                    this.fullName = "Joker";
+                    FullName = "Joker";
                     break;
                 default:
-                    this.fullName += value;
+                    FullName += value;
                     break;
 
 

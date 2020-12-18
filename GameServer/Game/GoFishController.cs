@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GameServer.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,11 @@ using System.Threading.Tasks;
 
 namespace GameServer.Game
 {
-    class GoFishController
+    public class GoFishController : GameController
     {
+        public GoFishController()
+        {
+
+        }
     }
 }

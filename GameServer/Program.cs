@@ -10,9 +10,7 @@ namespace GameServer
     {
         static void Main(string[] args)
         {
-            Manager mdasdas = new Manager();
-            mdasdas.DBTest();
-            Console.ReadKey();
+            RequestManager gm = new RequestManager();
         }
     }
 }

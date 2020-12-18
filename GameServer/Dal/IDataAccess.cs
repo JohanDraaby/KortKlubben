@@ -8,9 +8,10 @@ namespace GameServer.Dal
 {
     interface IDataAccess
     {
-        bool CreateUser();
-        string ReadUser();
-        bool UpdateUser();
-        bool DeleteUser();
+        bool CreateUser(string username, string password, string mail);
+        string ReadUser(string username);
+        bool ModifyMail(string username, string mail);
+        bool ModifyPassword(string username, string newPassword);
+        bool DeleteUser(string username);
     }
 }

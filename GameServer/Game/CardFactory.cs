@@ -6,14 +6,21 @@ using System.Threading.Tasks;
 
 namespace GameServer.Game
 {
-    class CardFactory
+    static class CardFactory
     {
-        private Card CreateCard(byte value, string suit, string colour)
+        /// <summary>
+        /// Returns a new <see cref="Card"/>.
+        /// </summary>
+        static private Card CreateCard(byte value, string suit, string colour)
         {
             return new Card(value, suit, colour);
         }
 
-        public List<Card> CreateDeck()
+        /// <summary>
+        /// Returns a new <see cref="List{Card}<"/>
+        /// The deck will consist of 52 playing cards from an ordinary deck.
+        /// </summary>
+        static public List<Card> CreateDeck()
         {
             List<Card> deck = new List<Card>();
 
