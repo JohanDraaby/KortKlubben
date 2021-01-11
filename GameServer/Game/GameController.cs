@@ -1,4 +1,5 @@
-﻿using GameServer.Model;
+﻿using GameServer.Connection;
+using GameServer.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,11 +18,22 @@ namespace GameServer.Game
             set { games = value; }
         }
 
+        private ICommunicate commHandler;
+
+        public ICommunicate CommHandler
+        {
+            get { return commHandler; }
+            set { commHandler = value; }
+        }
+
         /// <summary>
         /// Constructor for the <see cref="GameController"/> class.
         /// </summary>
-        public GameController()
+        public GameController(ICommunicate comm)
         {
+            CommHandler = comm;
+
+            Games = new List<CardGame>();
         }
 
         /// <summary>

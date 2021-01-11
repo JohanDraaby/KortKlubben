@@ -17,13 +17,13 @@ namespace GameServer.Lobby
             set { lobbies = value; }
         }
 
-        private ICommunicate commHandler = new SocketHandler();
+        //private ICommunicate commHandler = new SocketHandler();
 
-        public ICommunicate CommHandler
-        {
-            get { return commHandler; }
-            set { commHandler = value; }
-        }
+        //public ICommunicate CommHandler
+        //{
+        //    get { return commHandler; }
+        //    set { commHandler = value; }
+        //}
 
         private GameLobby CreateNewLobby()
         {

@@ -9,6 +9,14 @@ namespace GameServer.Model
 {
     public class User
     {
+        private byte point;
+
+        public byte Point
+        {
+            get { return point; }
+            set { point = value; }
+        }
+
         private byte requestType;
         public byte RequestType
         {
@@ -16,10 +24,10 @@ namespace GameServer.Model
             set { requestType = value; }
         }
 
-        private string namne;
+        private string name;
         public string Name
         {
-            get { return namne; }
+            get { return name; }
         }
 
         private string email;
@@ -46,7 +54,7 @@ namespace GameServer.Model
 
         public User(string name, string email, int wins, string ip, TcpClient client)
         {
-            this.namne = name;
+            this.name = name;
             Email = email;
             Wins = wins;
             this.ip = ip;

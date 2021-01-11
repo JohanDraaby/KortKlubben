@@ -10,7 +10,7 @@ namespace GameServer
     {
         static void Main(string[] args)
         {
-            RequestManager gm = new RequestManager();
+            GamePresenter gm = new GamePresenter();
         }
     }
 }

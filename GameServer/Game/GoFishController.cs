@@ -1,17 +1,189 @@
-﻿using GameServer.Model;
+﻿using GameServer.Connection;
+using GameServer.Model;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace GameServer.Game
 {
     public class GoFishController : GameController
     {
-        public GoFishController()
-        {
+        private List<GameRequest> listOfGameRequests;
 
+        public List<GameRequest> ListOfGameRequests
+        {
+            get { return listOfGameRequests; }
+            set { listOfGameRequests = value; }
+        }
+
+        private SocketHandler socketHandler;
+
+        SocketHandler SocketHandler
+        {
+            get { return socketHandler; }
+            set { socketHandler = value; }
+        }
+
+
+        public GoFishController(ICommunicate comm) : base(comm)
+        {
+            SocketHandler CommHandler = (SocketHandler)comm;
+            SocketHandler = (SocketHandler)CommHandler;
+
+            // Subscribe to collection
+            // Make a collection to observe and add a few Person objects.
+            // Wire up the CollectionChanged event.
+
+            Console.WriteLine("GoFishController constructor");
+
+            //ListOfGameRequests = CommHandler.GetGameRequests();
+            ListOfGameRequests = new List<GameRequest>();
+
+            CommHandler.ListOfGameRequests.CollectionChanged += GameRequests_CollectionChanged;
+
+            // Start thread that handles GameRequests
+            Thread gameRequestThread = new Thread(HandleGameRequests);
+            gameRequestThread.Start();
+        }
+
+        void GameRequests_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            // What was the action that caused the event?
+            //Console.WriteLine("Action for this event: {0}", e.Action);
+
+            // They added something. 
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                // Now show the NEW items that were inserted.
+                foreach (GameRequest g in e.NewItems)
+                {
+                    ListOfGameRequests.Add(g);
+                }
+            }
+        }
+
+        void CompleteGameRequest(GameRequest gameRequestCompleted)
+        {
+            SocketHandler.ListOfGameRequests.Remove(gameRequestCompleted);
+            ListOfGameRequests.Remove(gameRequestCompleted);
+        }
+
+        void HandleGameRequests()
+        {
+            while (true)
+            {
+                if (ListOfGameRequests.Count != 0)
+                {
+                    // Do stuff
+                    for (int i = 0; i < ListOfGameRequests.Count; i++)
+                    {
+                        HandleRequest(ListOfGameRequests[i]);
+                        //Finished doing stuff
+                        CompleteGameRequest(ListOfGameRequests[i]);
+                    }
+                }
+            }
+        }
+
+        void HandleRequest(GameRequest gameRequestToHandle)
+        {
+            switch (gameRequestToHandle.RequestType)
+            {
+                // ForwardRequest
+                case 1:
+                    CardGame tempGame = GetCardGame(gameRequestToHandle.UserFrom);
+
+                    if (gameRequestToHandle.UserFrom == tempGame.ActivePlayer)
+                    {
+                        gameRequestToHandle.RequestType = 3;
+                        SocketHandler.Send(gameRequestToHandle);
+                    }
+                    else
+                    {
+                        gameRequestToHandle.UserTo = tempGame.ActivePlayer;
+                        SocketHandler.Send(gameRequestToHandle);
+                    }
+
+                    break;
+
+                // SendPlayerCards
+                case 3:
+                    // Find Card From Deck
+                    if (gameRequestToHandle.Cardlist.Count == 0)
+                    {
+
+                        for (int i = 0; i < Games.Count; i++)
+                        {
+                            for (int j = 0; j < Games[i].ListOfUsers.Count; j++)
+                            {
+                                if (Games[i].ListOfUsers[j].Name == gameRequestToHandle.UserTo/* && Games[i].Deck.Count != 0*/)
+                                {
+                                    gameRequestToHandle.Cardlist.Add(Games[i].Deck.ElementAt(0));
+                                    Games[i].Deck.RemoveAt(0);
+                                }
+                            }
+                        }
+                        gameRequestToHandle.UserFrom = gameRequestToHandle.UserTo;
+                    }
+                    gameRequestToHandle.RequestType = 2;
+                    SocketHandler.Send(gameRequestToHandle);
+
+
+                    // If things fuck up, check this
+                    tempGame = GetCardGame(gameRequestToHandle.UserFrom);
+
+                    Console.WriteLine("The active player now is " + tempGame.ActivePlayer);
+                    Console.WriteLine("Request came from " + gameRequestToHandle.UserFrom);
+                    if (gameRequestToHandle.UserFrom == tempGame.ActivePlayer)
+                    {
+                        Console.WriteLine("Nu er vi inde i Set Active player");
+                        tempGame.SetActivePlayer();
+
+                        GameRequest newActivePlayer = new GameRequest();
+                        newActivePlayer.UserTo = tempGame.ActivePlayer;
+                        newActivePlayer.RequestType = 1;
+
+                        Console.WriteLine("Set Active player to " + newActivePlayer.UserTo);
+                        Console.WriteLine("=========================================");
+                        Console.WriteLine("=========================================");
+                        SocketHandler.Send(newActivePlayer);
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+        }
+
+        // Find a game through a player
+        public CardGame GetCardGame(string currentActivePlayer)
+        {
+            foreach (CardGame c in Games)
+            {
+                foreach (User u in c.ListOfUsers)
+                {
+                    if (u.Name == currentActivePlayer)
+                    {
+                        return c;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        public void SetStartPlayer(CardGame cg)
+        {
+            GameRequest newActivePlayer = new GameRequest();
+            newActivePlayer.UserTo = cg.ActivePlayer;
+            newActivePlayer.RequestType = 1;
+
+            SocketHandler.Send(newActivePlayer);
         }
     }
 }
