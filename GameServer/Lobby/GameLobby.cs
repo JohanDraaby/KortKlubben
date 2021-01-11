@@ -68,6 +68,5 @@ namespace GameServer.Lobby
         //    // Starts game
         //    StartGame(client, byte_count);
         //}
-
     }
 }

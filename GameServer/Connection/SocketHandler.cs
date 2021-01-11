@@ -15,7 +15,6 @@ namespace GameServer.Connection
 {
     class SocketHandler : ICommunicate
     {
-        //private object _lock;
         readonly object _lock = new object();
 
         private Dictionary<int, TcpClient> tcpClients;
@@ -49,6 +48,9 @@ namespace GameServer.Connection
             get { return messageConverter; }
             set { messageConverter = value; }
         }
+        
+        public int Port { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public List<string> ConnectedDevices { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public SocketHandler(IConvertable converter)
         {
@@ -57,24 +59,35 @@ namespace GameServer.Connection
         }
 
 
-        public int Port { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public List<string> ConnectedDevices { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
+        /// <summary>
+        /// Check already established connections
+        /// </summary>
         public void CheckConnections()
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Receive data from client
+        /// </summary>
         public string Receive()
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Remove the connected client from ConnectedDevices
+        /// </summary>
+        /// <param name="ip"></param>
         public void RemoveConnectedDevice(string ip)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Send data to a client
+        /// </summary>
+        /// <param name="requestToSend"></param>
         public void Send(GameRequest requestToSend)
         {
 
@@ -84,6 +97,7 @@ namespace GameServer.Connection
             s = JsonConvert.SerializeObject(requestToSend, Formatting.Indented);
             buffer = Encoding.UTF8.GetBytes(s);
 
+            // Write to console what action the server is doing based on RequestType
             if (requestToSend.RequestType == 2)
             {
                 Console.WriteLine("This is the server giving a card to a player\n" + s);
@@ -96,6 +110,7 @@ namespace GameServer.Connection
             // Find client
             NetworkStream stream;
 
+            // Send to client
             lock (_lock)
             {
                 foreach (User c in ClientList)
@@ -108,9 +123,13 @@ namespace GameServer.Connection
                     }
                 }
             }
-            // Send to client
         }
 
+        /// <summary>
+        /// Handle connected client's connection
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="client"></param>
         public void HandleConnections()
         {
             tcpClients = new Dictionary<int, TcpClient>();
@@ -133,16 +152,27 @@ namespace GameServer.Connection
             }
         }
 
+        // Outdated
+        /// <summary>
+        /// Return list of connected TCP clients
+        /// </summary>
         public Dictionary<int, TcpClient> GetTcpClients()
         {
             return TcpClients;
         }
 
+        /// <summary>
+        /// Return list of connected clients
+        /// </summary>
         public List<User> GetClients()
         {
             return ClientList;
         }
 
+        // Outdated
+        /// <summary>
+        /// Return collection of <see cref="GameRequest"/>s
+        /// </summary>
         public ObservableCollection<GameRequest> GetGameRequests()
         {
             ObservableCollection<GameRequest> list = ListOfGameRequests;
@@ -152,6 +182,10 @@ namespace GameServer.Connection
             return list;
         }
 
+        /// <summary>
+        /// Initializes <see cref="User"/>'s session after they've connected
+        /// </summary>
+        /// <param name="client"></param>
         private void InitUserSession(TcpClient client)
         {
             // User can do stuff in their own session.
@@ -194,6 +228,11 @@ namespace GameServer.Connection
             }
         }
 
+        /// <summary>
+        /// Handles <see cref="ConnectionRequest"/>s from a client
+        /// </summary>
+        /// <param name="converted"></param>
+        /// <param name="client"></param>
         private void ConnectionRequestHandler(ConnectionRequest converted, TcpClient client)
         {
             switch (converted.RequestType)
@@ -206,10 +245,10 @@ namespace GameServer.Connection
                     }
                     break;
                 case 2:
-                    // DisConnect
+                    // Disconnect
                     break;
                 case 3:
-                    // ReConnect
+                    // Reconnect
                     break;
                 default:
                     break;

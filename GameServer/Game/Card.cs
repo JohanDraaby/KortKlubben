@@ -37,7 +37,7 @@ namespace GameServer.Game
 
 
         /// <summary>
-        /// Used To Initiate An Object Of Type <see cref="Card"/>
+        /// Initiate An Object Of Type <see cref="Card"/>
         /// </summary>
         public Card(byte value, string suit, string colour)
         {
@@ -66,8 +66,6 @@ namespace GameServer.Game
                 default:
                     FullName += value;
                     break;
-
-
             }
         }
     }

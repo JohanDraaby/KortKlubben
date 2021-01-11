@@ -55,7 +55,7 @@ namespace GameServer.Game
         }
 
         /// <summary>
-        /// Reorganizes the deck of <see cref="Card"/>s to simulate a shuffling of the cards.
+        /// Reorganize the deck of <see cref="Card"/>s to simulate shuffling the cards.
         /// </summary>
         void Shuffle()
         {
@@ -73,6 +73,7 @@ namespace GameServer.Game
             }
         }
 
+        // Outdated
         /// <summary>
         /// Deals 7 <see cref="Card"/>s to each player in the game, at the start of the game.
         /// </summary>
@@ -122,11 +123,18 @@ namespace GameServer.Game
         /// <summary>
         /// Sends 7 <see cref="Card"/>s to a player. This is the players hand.
         /// </summary>
+        /// <param name="player"></param>
+        /// <param name="cardList"></param>
         void SendCards(User player, List<Card> cardList)
         {
 
         }
-
+        
+        /// <summary>
+        /// Start and run game
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="byte_count"></param>
         void StartGame(TcpClient client, int byte_count)
         {
             NetworkStream stream;
@@ -245,6 +253,9 @@ namespace GameServer.Game
             }
         }
 
+        /// <summary>
+        /// Set active player to the next in line
+        /// </summary>
         public void SetActivePlayer()
         {
             foreach (User u in ListOfUsers)

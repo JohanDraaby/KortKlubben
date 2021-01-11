@@ -10,6 +10,7 @@ namespace GameServer
     {
         static void Main(string[] args)
         {
+            // Run the GamePresenter
             GamePresenter gm = new GamePresenter();
         }
     }

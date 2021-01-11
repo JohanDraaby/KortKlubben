@@ -52,6 +52,10 @@ namespace GameServer
             set { onlineUsers = value; }
         }
 
+        readonly object _lock = new object();
+        Dictionary<int, TcpClient> tcpClients = new Dictionary<int, TcpClient>();
+        static List<User> clientList;
+
         public GamePresenter()
         {
             SocketHandler = new SocketHandler(new Game.JsonConverter());
@@ -60,10 +64,6 @@ namespace GameServer
 
             StartCommunication();
         }
-
-        readonly object _lock = new object();
-        Dictionary<int, TcpClient> tcpClients = new Dictionary<int, TcpClient>();
-        static List<User> clientList;
 
         /// <summary>
         /// Connects <see cref="TcpClient"/>s to the socket.
@@ -74,7 +74,7 @@ namespace GameServer
             clientList = new List<User>();
             GoFishController gfc = new GoFishController(SocketHandler);
 
-            // Start socket connection thread
+            // Start socket connection thread and update evero second
             lock (_lock)
             {
                 Thread connectionThread = new Thread(handler.HandleConnections);
@@ -83,6 +83,7 @@ namespace GameServer
                 {
                     Thread.Sleep(1000);
 
+                    // Start game when there are two connected clients.
                     if (handler.GetClients().Count >= 2)
                     {
                         clientList = handler.GetClients();

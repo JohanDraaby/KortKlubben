@@ -29,6 +29,7 @@ namespace GameServer.Game
         /// <summary>
         /// Constructor for the <see cref="GameController"/> class.
         /// </summary>
+        /// <param name="comm">Object which implements ICommunicate</param>
         public GameController(ICommunicate comm)
         {
             CommHandler = comm;
@@ -37,7 +38,7 @@ namespace GameServer.Game
         }
 
         /// <summary>
-        /// Instantiates a new <see cref="CardGame"/> and adds it to the list of games.
+        /// Instantiate a new <see cref="CardGame"/> and adds it to the list of games.
         /// </summary>
         /// <param name="players">List of players to enter the game</param>
         public void NewGame(List<User> players)
@@ -46,7 +47,7 @@ namespace GameServer.Game
         }
 
         /// <summary>
-        /// Disposes of a <see cref="CardGame"/> once the players are done with it.
+        /// Dispose of a <see cref="CardGame"/> once the players are done with it.
         /// </summary>
         /// <param name="gameToDispose"></param>
         public void DisposeGame(CardGame gameToDispose)

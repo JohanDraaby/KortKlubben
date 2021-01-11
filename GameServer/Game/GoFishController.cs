@@ -51,12 +51,17 @@ namespace GameServer.Game
             gameRequestThread.Start();
         }
 
+        /// <summary>
+        /// Listen for new <see cref="GameRequest"/>s
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         void GameRequests_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             // What was the action that caused the event?
             //Console.WriteLine("Action for this event: {0}", e.Action);
 
-            // They added something. 
+            // Something was added. 
             if (e.Action == NotifyCollectionChangedAction.Add)
             {
                 // Now show the NEW items that were inserted.
@@ -67,12 +72,19 @@ namespace GameServer.Game
             }
         }
 
+        /// <summary>
+        /// Remove a <see cref="GameRequest"/> which has been properly handled from collection
+        /// </summary>
+        /// <param name="gameRequestCompleted"></param>
         void CompleteGameRequest(GameRequest gameRequestCompleted)
         {
             SocketHandler.ListOfGameRequests.Remove(gameRequestCompleted);
             ListOfGameRequests.Remove(gameRequestCompleted);
         }
 
+        /// <summary>
+        /// Handle all incoming <see cref="GameRequest"/>s
+        /// </summary>
         void HandleGameRequests()
         {
             while (true)
@@ -90,6 +102,10 @@ namespace GameServer.Game
             }
         }
 
+        /// <summary>
+        /// Handle all incoming <see cref="Request"/>s
+        /// </summary>
+        /// <param name="gameRequestToHandle"></param>
         void HandleRequest(GameRequest gameRequestToHandle)
         {
             switch (gameRequestToHandle.RequestType)
@@ -108,7 +124,6 @@ namespace GameServer.Game
                         gameRequestToHandle.UserTo = tempGame.ActivePlayer;
                         SocketHandler.Send(gameRequestToHandle);
                     }
-
                     break;
 
                 // SendPlayerCards
@@ -116,7 +131,6 @@ namespace GameServer.Game
                     // Find Card From Deck
                     if (gameRequestToHandle.Cardlist.Count == 0)
                     {
-
                         for (int i = 0; i < Games.Count; i++)
                         {
                             for (int j = 0; j < Games[i].ListOfUsers.Count; j++)
@@ -134,14 +148,15 @@ namespace GameServer.Game
                     SocketHandler.Send(gameRequestToHandle);
 
 
-                    // If things fuck up, check this
                     tempGame = GetCardGame(gameRequestToHandle.UserFrom);
 
                     Console.WriteLine("The active player now is " + tempGame.ActivePlayer);
                     Console.WriteLine("Request came from " + gameRequestToHandle.UserFrom);
+
+                    // Set new active player if the current active player's turn ends
                     if (gameRequestToHandle.UserFrom == tempGame.ActivePlayer)
                     {
-                        Console.WriteLine("Nu er vi inde i Set Active player");
+                        Console.WriteLine("We're in Set Active player");
                         tempGame.SetActivePlayer();
 
                         GameRequest newActivePlayer = new GameRequest();
@@ -160,7 +175,10 @@ namespace GameServer.Game
 
         }
 
-        // Find a game through a player
+        /// <summary>
+        /// Find a game through a player
+        /// </summary>
+        /// <param name="currentActivePlayer"></param>
         public CardGame GetCardGame(string currentActivePlayer)
         {
             foreach (CardGame c in Games)
@@ -177,6 +195,10 @@ namespace GameServer.Game
             return null;
         }
 
+        /// <summary>
+        /// Set an active player at the start of a game
+        /// </summary>
+        /// <param name="cg"></param>
         public void SetStartPlayer(CardGame cg)
         {
             GameRequest newActivePlayer = new GameRequest();
