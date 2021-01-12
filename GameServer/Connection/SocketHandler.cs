@@ -263,6 +263,9 @@ namespace GameServer.Connection
         void AddTCPClient(string user, TcpClient client)
         {
             ClientList.Add(new User(user, "dsa", 0, "dsa", client));
+            Console.WriteLine("=============================");
+            Console.WriteLine("Added: " + user + " to tcpclients!");
+            Console.WriteLine("=============================");
         }
     }
 }

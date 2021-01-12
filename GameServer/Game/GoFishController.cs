@@ -91,6 +91,9 @@ namespace GameServer.Game
             {
                 if (ListOfGameRequests.Count != 0)
                 {
+                    Console.WriteLine();
+                    Console.WriteLine("There are requests waiting to be handled...");
+                    Console.WriteLine();
                     // Do stuff
                     for (int i = 0; i < ListOfGameRequests.Count; i++)
                     {
@@ -108,6 +111,11 @@ namespace GameServer.Game
         /// <param name="gameRequestToHandle"></param>
         void HandleRequest(GameRequest gameRequestToHandle)
         {
+            Console.WriteLine();
+            Console.WriteLine("==================");
+            Console.WriteLine("Handling request type " + gameRequestToHandle.RequestType + " sent from " + gameRequestToHandle.UserFrom);
+            Console.WriteLine("==================");
+            Console.WriteLine();
             switch (gameRequestToHandle.RequestType)
             {
                 // ForwardRequest
