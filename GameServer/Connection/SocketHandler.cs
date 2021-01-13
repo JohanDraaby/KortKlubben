@@ -95,6 +95,7 @@ namespace GameServer.Connection
             byte[] buffer;
 
             s = JsonConvert.SerializeObject(requestToSend, Formatting.Indented);
+            Console.WriteLine(s);
             buffer = Encoding.UTF8.GetBytes(s);
 
             // Write to console what action the server is doing based on RequestType

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace GameServer.Game
@@ -18,6 +19,16 @@ namespace GameServer.Game
             get { return listOfUsers; }
             set { listOfUsers = value; }
         }
+
+        private List<byte> listOfUserPoints = new List<byte>();
+
+        public List<byte> ListOfUserPoints
+        {
+            get { return listOfUserPoints; }
+            set { listOfUserPoints = value; }
+        }
+
+
 
         private List<Card> deck;
         public List<Card> Deck
@@ -34,6 +45,15 @@ namespace GameServer.Game
             set { activePlayer = value; }
         }
 
+        private int scoresReceived;
+
+        public int ScoresReceived
+        {
+            get { return scoresReceived; }
+            set { scoresReceived = value; }
+        }
+
+
         readonly object _lock = new object();
 
         Random rng = new Random();
@@ -47,11 +67,39 @@ namespace GameServer.Game
         public CardGame(List<User> listOfPlayers)
         {
             ListOfUsers = listOfPlayers;
-            //Deck = CardFactory.CreateDeck();
             Deck = CardFactory.CreateDeck();
             Shuffle();
             Deal();
             ActivePlayer = ListOfUsers.First().Name;
+
+            List<string> listOfUsernames = new List<string>();
+
+            for (int i = 0; i < ListOfUsers.Count; i++)
+            {
+                listOfUsernames.Add(ListOfUsers[i].Name);
+                listOfUserPoints.Add(0);
+            }
+
+            Thread.Sleep(1000);
+            string s;
+            byte[] buffer;
+            NetworkStream stream;
+
+            SetupRequest setupRequest = new SetupRequest();
+            setupRequest.RequestType = 4;
+            setupRequest.Players = listOfUsernames;
+
+            s = JsonConvert.SerializeObject(setupRequest, Formatting.Indented);
+            buffer = Encoding.UTF8.GetBytes(s);
+
+            lock (_lock)
+            {
+                foreach (User player in ListOfUsers)
+                {
+                    stream = player.Client.GetStream();
+                    stream.Write(buffer, 0, buffer.Length);
+                }
+            }
         }
 
         /// <summary>
@@ -96,7 +144,6 @@ namespace GameServer.Game
         /// </summary>
         void Deal()
         {
-            Console.WriteLine(ListOfUsers.Count);
             string s;
             byte[] buffer;
 
@@ -112,6 +159,7 @@ namespace GameServer.Game
                 GameRequest dealCard = new GameRequest();
                 dealCard.Cardlist = hand;
                 dealCard.RequestType = 2;
+                dealCard.UserFrom = "Dealer";
 
                 s = JsonConvert.SerializeObject(dealCard, Formatting.Indented);
                 buffer = Encoding.UTF8.GetBytes(s);
@@ -129,7 +177,7 @@ namespace GameServer.Game
         {
 
         }
-        
+
         /// <summary>
         /// Start and run game
         /// </summary>
@@ -166,6 +214,29 @@ namespace GameServer.Game
                         break;
                 }
             }
+        }
+
+        public void EndGame()
+        {
+            GameRequest endGameRequest = new GameRequest();
+            endGameRequest.RequestType = 0;
+
+            string s;
+            byte[] buffer;
+
+            s = JsonConvert.SerializeObject(endGameRequest, Formatting.Indented);
+            buffer = Encoding.UTF8.GetBytes(s);
+
+
+            for (int i = 0; i < ListOfUsers.Count; i++)
+            {
+                endGameRequest.UserTo = ListOfUsers[i].Name;
+                SendRequest(endGameRequest.UserTo, buffer);
+            }
+
+            Console.WriteLine("==============================");
+            Console.WriteLine("=       Ending Game          =");
+            Console.WriteLine("==============================");
         }
 
         /// <summary>

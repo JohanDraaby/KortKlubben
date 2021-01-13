@@ -63,6 +63,7 @@
     <Compile Include="Lobby\GameLobby.cs" />
     <Compile Include="Lobby\LobbyManager.cs" />
     <Compile Include="GamePresenter.cs" />
+    <Compile Include="Model\SetupRequest.cs" />
     <Compile Include="Model\User.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

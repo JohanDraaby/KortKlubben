@@ -30,6 +30,7 @@ namespace GameServer.Game
         }
 
 
+
         public GoFishController(ICommunicate comm) : base(comm)
         {
             SocketHandler CommHandler = (SocketHandler)comm;
@@ -143,10 +144,13 @@ namespace GameServer.Game
                         {
                             for (int j = 0; j < Games[i].ListOfUsers.Count; j++)
                             {
-                                if (Games[i].ListOfUsers[j].Name == gameRequestToHandle.UserTo/* && Games[i].Deck.Count != 0*/)
+                                if (Games[i].ListOfUsers[j].Name == gameRequestToHandle.UserTo)
                                 {
                                     gameRequestToHandle.Cardlist.Add(Games[i].Deck.ElementAt(0));
                                     Games[i].Deck.RemoveAt(0);
+                                    Console.WriteLine("===");
+                                    Console.WriteLine(Games[i].Deck.Count);
+                                    Console.WriteLine("===");
                                 }
                             }
                         }
@@ -154,9 +158,13 @@ namespace GameServer.Game
                     }
                     gameRequestToHandle.RequestType = 2;
                     SocketHandler.Send(gameRequestToHandle);
-
-
                     tempGame = GetCardGame(gameRequestToHandle.UserFrom);
+
+                    if (tempGame.Deck.Count == 0)
+                    {
+                        tempGame.EndGame();
+                        break;
+                    }
 
                     Console.WriteLine("The active player now is " + tempGame.ActivePlayer);
                     Console.WriteLine("Request came from " + gameRequestToHandle.UserFrom);
@@ -175,6 +183,37 @@ namespace GameServer.Game
                         Console.WriteLine("=========================================");
                         Console.WriteLine("=========================================");
                         SocketHandler.Send(newActivePlayer);
+                    }
+                    break;
+
+                case 10:
+                    CardGame tempCardGame = GetCardGame(gameRequestToHandle.UserFrom);
+                    tempCardGame.ScoresReceived++;
+                    for (int i = 0; i < tempCardGame.ListOfUsers.Count; i++)
+                    {
+                        if (gameRequestToHandle.UserFrom == tempCardGame.ListOfUsers[i].Name)
+                        {
+                            tempCardGame.ListOfUserPoints[i] = gameRequestToHandle.CardValue;
+                        }
+                    }
+                    if (tempCardGame.ScoresReceived == tempCardGame.ListOfUsers.Count)
+                    {
+                        int highestScoore = 0;
+                        for (int i = 0; i < tempCardGame.ListOfUsers.Count; i++)
+                        {
+                            if (tempCardGame.ListOfUserPoints[i] > tempCardGame.ListOfUserPoints[highestScoore])
+                            {
+                                highestScoore = i;
+                            }
+
+                            gameRequestToHandle.UserFrom = tempCardGame.ListOfUsers[highestScoore].Name;
+                        }
+
+                        for (int i = 0; i < tempCardGame.ListOfUsers.Count; i++)
+                        {
+                            gameRequestToHandle.UserTo = tempCardGame.ListOfUsers[i].Name;
+                            SocketHandler.Send(gameRequestToHandle);
+                        }
                     }
                     break;
                 default:
