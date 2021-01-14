@@ -93,18 +93,7 @@ namespace GameServer.Connection
             byte[] buffer;
 
             s = JsonConvert.SerializeObject(requestToSend, Formatting.Indented);
-            Console.WriteLine(s);
             buffer = Encoding.UTF8.GetBytes(s);
-
-            // Write to console what action the server is doing based on RequestType
-            if (requestToSend.RequestType == 2)
-            {
-                Console.WriteLine("This is the server giving a card to a player\n" + s);
-            }
-            if (requestToSend.RequestType == 3)
-            {
-                Console.WriteLine("Asked player for cards\n" + s);
-            }
 
             // Sending Buffer
             SendStreamToUser(requestToSend, buffer);
@@ -154,7 +143,6 @@ namespace GameServer.Connection
             {
                 TcpClient client = ServerSocket.AcceptTcpClient();
                 lock (_lock) tcpClients.Add(count, client);
-                Console.WriteLine("Someone connected!!");
 
                 Thread t = new Thread(() => InitUserSession(client));
                 t.Start();
@@ -205,15 +193,11 @@ namespace GameServer.Connection
             Request converted;
             if (data.Contains("Username"))
             {
-                Console.WriteLine("Userdata:");
-                Console.WriteLine(data);
                 converted = JsonConvert.DeserializeObject<ConnectionRequest>(data);
                 ConnectionRequestHandler((ConnectionRequest)converted, client);
             }
             else
             {
-                Console.WriteLine("\n\nRequestData (Player)");
-                Console.WriteLine(data + "\n\n");
                 converted = JsonConvert.DeserializeObject<GameRequest>(data);
 
                 if (converted is GameRequest)
@@ -231,17 +215,7 @@ namespace GameServer.Connection
         /// <param name="client"></param>
         private void ConnectionRequestHandler(ConnectionRequest converted, TcpClient client)
         {
-            AddTCPClient(converted.Username, client);
-        }
-
-        /// <summary>
-        /// Adds a connected TCPClient to list of connected TCPClients
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="client"></param>
-        void AddTCPClient(string user, TcpClient client)
-        {
-            ClientList.Add(new User(user, "dsa", 0, "dsa", client));
+            ClientList.Add(new User(converted.Username, "(Isert Ip)", 0, "(Insert Ip)", client));
         }
     }
 }

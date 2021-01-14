@@ -169,6 +169,7 @@ namespace GameServer.Game
         /// Broadcasting end of game to all players
         /// </summary>
         public void EndGame()
+
         {
             GameRequest endGameRequest = new GameRequest();
             endGameRequest.RequestType = 0;
@@ -184,10 +185,6 @@ namespace GameServer.Game
                 endGameRequest.UserTo = ListOfUsers[i].Name;
                 SendRequest(endGameRequest.UserTo, buffer);
             }
-
-            Console.WriteLine("==============================");
-            Console.WriteLine("=       Ending Game          =");
-            Console.WriteLine("==============================");
         }
 
         /// <summary>

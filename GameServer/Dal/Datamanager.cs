@@ -26,9 +26,9 @@ namespace GameServer.Dal
                 conn.Open();
                 SqlCommand cmd = new SqlCommand("CreateUser", conn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.Add("@Username", SqlDbType.VarChar).Value = "CharlieT";
-                cmd.Parameters.Add("@Password", SqlDbType.VarChar).Value = "Knootknoot";
-                cmd.Parameters.Add("@Mail", SqlDbType.VarChar).Value = "Præventionsguillotine@Næsespray.dk";
+                cmd.Parameters.Add("@Username", SqlDbType.VarChar).Value = username;
+                cmd.Parameters.Add("@Password", SqlDbType.VarChar).Value = password;
+                cmd.Parameters.Add("@Mail", SqlDbType.VarChar).Value = mail;
 
                 cmd.ExecuteNonQuery();
             }
@@ -39,7 +39,7 @@ namespace GameServer.Dal
         /// <summary>
         /// Deletes a user record from the SQL database.
         /// </summary>
-        public bool DeleteUser(string username)
+        public bool DeleteUser(string username, string password)
         {
             bool userDeleted = true;
 
@@ -48,8 +48,8 @@ namespace GameServer.Dal
                 conn.Open();
                 SqlCommand cmd = new SqlCommand("DeleteUser", conn);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.Add("@Username", SqlDbType.VarChar).Value = "usernameTest2";
-                cmd.Parameters.Add("@Password", SqlDbType.VarChar).Value = "passwordTest2";
+                cmd.Parameters.Add("@Username", SqlDbType.VarChar).Value = username;
+                cmd.Parameters.Add("@Password", SqlDbType.VarChar).Value = password;
 
                 cmd.ExecuteNonQuery();
             }

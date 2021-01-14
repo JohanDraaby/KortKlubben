@@ -12,6 +12,6 @@ namespace GameServer.Dal
         string ReadUser(string username);
         bool ModifyMail(string username, string mail);
         bool ModifyPassword(string username, string newPassword);
-        bool DeleteUser(string username);
+        bool DeleteUser(string username, string password);
     }
 }
