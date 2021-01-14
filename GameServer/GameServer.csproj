@@ -67,8 +67,6 @@
     <Compile Include="Model\User.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="test\eventargObs.cs" />
-    <Compile Include="test\ObsCollection.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

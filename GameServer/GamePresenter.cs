@@ -23,7 +23,7 @@ namespace GameServer
             set { deck = value; }
         }
 
-        private ICommunicate socketHandler;'
+        private ICommunicate socketHandler;
         public ICommunicate SocketHandler
         {
             get { return socketHandler; }
