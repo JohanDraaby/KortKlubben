@@ -18,7 +18,6 @@ namespace GameServer.Connection
         readonly object _lock = new object();
 
         private Dictionary<int, TcpClient> tcpClients;
-
         public Dictionary<int, TcpClient> TcpClients
         {
             get { return tcpClients; }
@@ -26,7 +25,6 @@ namespace GameServer.Connection
         }
 
         private List<User> clientList;
-
         public List<User> ClientList
         {
             get { return clientList; }
@@ -34,7 +32,6 @@ namespace GameServer.Connection
         }
 
         private ObservableCollection<GameRequest> listOfGameRequests = new ObservableCollection<GameRequest>();
-
         public ObservableCollection<GameRequest> ListOfGameRequests
         {
             get { return listOfGameRequests; }
@@ -42,7 +39,6 @@ namespace GameServer.Connection
         }
 
         private IConvertable messageConverter;
-
         public IConvertable MessageConverter
         {
             get { return messageConverter; }
@@ -52,37 +48,40 @@ namespace GameServer.Connection
         public int Port { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public List<string> ConnectedDevices { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
+        /// <summary>
+        /// Contructor for <see cref="SocketHandler"/>
+        /// </summary>
+        /// <param name="converter"></param>
         public SocketHandler(IConvertable converter)
         {
             MessageConverter = converter;
             clientList = new List<User>();
         }
 
-
         /// <summary>
         /// Check already established connections
         /// </summary>
-        public void CheckConnections()
-        {
-            throw new NotImplementedException();
-        }
+        //public void CheckConnections()
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         /// <summary>
         /// Receive data from client
         /// </summary>
-        public string Receive()
-        {
-            throw new NotImplementedException();
-        }
+        //public string Receive()
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         /// <summary>
         /// Remove the connected client from ConnectedDevices
         /// </summary>
         /// <param name="ip"></param>
-        public void RemoveConnectedDevice(string ip)
-        {
-            throw new NotImplementedException();
-        }
+        //public void RemoveConnectedDevice(string ip)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         /// <summary>
         /// Send data to a client
@@ -90,7 +89,6 @@ namespace GameServer.Connection
         /// <param name="requestToSend"></param>
         public void Send(GameRequest requestToSend)
         {
-
             string s;
             byte[] buffer;
 
@@ -108,6 +106,17 @@ namespace GameServer.Connection
                 Console.WriteLine("Asked player for cards\n" + s);
             }
 
+            // Sending Buffer
+            SendStreamToUser(requestToSend, buffer);
+        }
+
+        /// <summary>
+        /// Sends <see cref="NetworkStream"/> To <see cref="User"/>
+        /// </summary>
+        /// <param name="requestToSend"></param>
+        /// <param name="buffer"></param>
+        private void SendStreamToUser(GameRequest requestToSend, byte[] buffer)
+        {
             // Find client
             NetworkStream stream;
 
@@ -153,34 +162,12 @@ namespace GameServer.Connection
             }
         }
 
-        // Outdated
-        /// <summary>
-        /// Return list of connected TCP clients
-        /// </summary>
-        public Dictionary<int, TcpClient> GetTcpClients()
-        {
-            return TcpClients;
-        }
-
         /// <summary>
         /// Return list of connected clients
         /// </summary>
         public List<User> GetClients()
         {
             return ClientList;
-        }
-
-        // Outdated
-        /// <summary>
-        /// Return collection of <see cref="GameRequest"/>s
-        /// </summary>
-        public ObservableCollection<GameRequest> GetGameRequests()
-        {
-            ObservableCollection<GameRequest> list = ListOfGameRequests;
-
-            ListOfGameRequests.Clear();
-
-            return list;
         }
 
         /// <summary>
@@ -195,7 +182,6 @@ namespace GameServer.Connection
             int byte_count;
 
             string data;
-            Request converted;
 
             while (true)
             {
@@ -204,27 +190,36 @@ namespace GameServer.Connection
                 byte_count = stream.Read(buffer, 0, buffer.Length);
 
                 data = Encoding.UTF8.GetString(buffer, 0, byte_count);
+                // Handeling request types
+                HandleRequestType(client, data);
+            }
+        }
 
+        /// <summary>
+        /// Converts the <see cref="Request"/> to the proper type of <see cref="Request"/>
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="data"></param>
+        private void HandleRequestType(TcpClient client, string data)
+        {
+            Request converted;
+            if (data.Contains("Username"))
+            {
+                Console.WriteLine("Userdata:");
+                Console.WriteLine(data);
+                converted = JsonConvert.DeserializeObject<ConnectionRequest>(data);
+                ConnectionRequestHandler((ConnectionRequest)converted, client);
+            }
+            else
+            {
+                Console.WriteLine("\n\nRequestData (Player)");
+                Console.WriteLine(data + "\n\n");
+                converted = JsonConvert.DeserializeObject<GameRequest>(data);
 
-                if (data.Contains("Username"))
+                if (converted is GameRequest)
                 {
-                    Console.WriteLine("Userdata:");
-                    Console.WriteLine(data);
-                    converted = JsonConvert.DeserializeObject<ConnectionRequest>(data);
-                    ConnectionRequestHandler((ConnectionRequest)converted, client);
-                }
-                else
-                {
-                    Console.WriteLine("\n\nRequestData (Player)");
-                    Console.WriteLine(data + "\n\n");
-                    // This is bad, but it works for now.
-                    converted = JsonConvert.DeserializeObject<GameRequest>(data);
-
-                    if (converted is GameRequest)
-                    {
-                        // Add to collection of gameRequests
-                        ListOfGameRequests.Add((GameRequest)converted);
-                    }
+                    // Add to collection of gameRequests
+                    ListOfGameRequests.Add((GameRequest)converted);
                 }
             }
         }
@@ -236,24 +231,7 @@ namespace GameServer.Connection
         /// <param name="client"></param>
         private void ConnectionRequestHandler(ConnectionRequest converted, TcpClient client)
         {
-            switch (converted.RequestType)
-            {
-                case 1:
-                    // Connect
-                    if (converted is ConnectionRequest)
-                    {
-                        AddTCPClient(converted.Username, client);
-                    }
-                    break;
-                case 2:
-                    // Disconnect
-                    break;
-                case 3:
-                    // Reconnect
-                    break;
-                default:
-                    break;
-            }
+            AddTCPClient(converted.Username, client);
         }
 
         /// <summary>
@@ -264,9 +242,6 @@ namespace GameServer.Connection
         void AddTCPClient(string user, TcpClient client)
         {
             ClientList.Add(new User(user, "dsa", 0, "dsa", client));
-            Console.WriteLine("=============================");
-            Console.WriteLine("Added: " + user + " to tcpclients!");
-            Console.WriteLine("=============================");
         }
     }
 }

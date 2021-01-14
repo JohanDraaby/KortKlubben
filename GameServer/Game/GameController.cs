@@ -11,7 +11,6 @@ namespace GameServer.Game
     public abstract class GameController
     {
         private List<CardGame> games;
-
         public List<CardGame> Games
         {
             get { return games; }
@@ -19,7 +18,6 @@ namespace GameServer.Game
         }
 
         private ICommunicate commHandler;
-
         public ICommunicate CommHandler
         {
             get { return commHandler; }
@@ -33,7 +31,6 @@ namespace GameServer.Game
         public GameController(ICommunicate comm)
         {
             CommHandler = comm;
-
             Games = new List<CardGame>();
         }
 
@@ -50,25 +47,9 @@ namespace GameServer.Game
         /// Dispose of a <see cref="CardGame"/> once the players are done with it.
         /// </summary>
         /// <param name="gameToDispose"></param>
-        public void DisposeGame(CardGame gameToDispose)
-        {
+        //public void DisposeGame(CardGame gameToDispose)
+        //{
 
-        }
-
-        /// <summary>
-        /// Sends a <see cref="GameRequest"/> to one of the players.
-        /// </summary>
-        public void SendRequest()
-        {
-
-        }
-
-        /// <summary>
-        /// Receives a <see cref="GameRequest"/> from one of the players.
-        /// </summary>
-        public void ReceiveRequest()
-        {
-
-        }
+        //}
     }
 }

@@ -23,20 +23,12 @@ namespace GameServer
             set { deck = value; }
         }
 
-        private ICommunicate socketHandler;
-
+        private ICommunicate socketHandler;'
         public ICommunicate SocketHandler
         {
             get { return socketHandler; }
             set { socketHandler = value; }
         }
-
-
-        static Random rng = new Random();
-
-        static bool gameIsStarted = false;
-
-        DataManager dm = new DataManager();
 
         private GameController gameController;
         public GameController GameController
@@ -53,15 +45,14 @@ namespace GameServer
         }
 
         readonly object _lock = new object();
-        Dictionary<int, TcpClient> tcpClients = new Dictionary<int, TcpClient>();
         static List<User> clientList;
 
+        /// <summary>
+        /// Constructor of <see cref="GamePresenter"/>
+        /// </summary>
         public GamePresenter()
         {
             SocketHandler = new SocketHandler(new Game.JsonConverter());
-            // GameController = new GoFishController();
-            // GameController.NewGame(OnlineUsers);
-
             StartCommunication();
         }
 
@@ -74,7 +65,17 @@ namespace GameServer
             clientList = new List<User>();
             GoFishController gfc = new GoFishController(SocketHandler);
 
-            // Start socket connection thread and update evero second
+            // Start socket connection thread and update every second
+            ConnectionListener(handler, gfc);
+        }
+
+        /// <summary>
+        /// Waits for enough connected <see cref="User"/> to start a <see cref="CardGame"/>
+        /// </summary>
+        /// <param name="handler"></param>
+        /// <param name="gfc"></param>
+        private void ConnectionListener(SocketHandler handler, GoFishController gfc)
+        {
             lock (_lock)
             {
                 Thread connectionThread = new Thread(handler.HandleConnections);

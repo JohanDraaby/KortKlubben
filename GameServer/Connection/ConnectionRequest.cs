@@ -10,7 +10,6 @@ namespace GameServer.Connection
     class ConnectionRequest : Request
     {
         private string username;
-
         public string Username
         {
             get { return username; }

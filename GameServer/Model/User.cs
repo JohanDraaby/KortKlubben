@@ -10,7 +10,6 @@ namespace GameServer.Model
     public class User
     {
         private byte point;
-
         public byte Point
         {
             get { return point; }

@@ -34,8 +34,6 @@ namespace GameServer.Game
             set { fullName = value; }
         }
 
-
-
         /// <summary>
         /// Initiate An Object Of Type <see cref="Card"/>
         /// </summary>

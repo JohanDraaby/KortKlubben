@@ -14,7 +14,6 @@ namespace GameServer.Game
     public class GoFishController : GameController
     {
         private List<GameRequest> listOfGameRequests;
-
         public List<GameRequest> ListOfGameRequests
         {
             get { return listOfGameRequests; }
@@ -22,25 +21,24 @@ namespace GameServer.Game
         }
 
         private SocketHandler socketHandler;
-
         SocketHandler SocketHandler
         {
             get { return socketHandler; }
             set { socketHandler = value; }
         }
 
-
-
+        /// <summary>
+        /// Contructor of <see cref="GoFishController"/>
+        /// </summary>
+        /// <param name="comm"></param>
         public GoFishController(ICommunicate comm) : base(comm)
         {
             SocketHandler CommHandler = (SocketHandler)comm;
-            SocketHandler = (SocketHandler)CommHandler;
+            SocketHandler = CommHandler;
 
             // Subscribe to collection
             // Make a collection to observe and add a few Person objects.
             // Wire up the CollectionChanged event.
-
-            Console.WriteLine("GoFishController constructor");
 
             //ListOfGameRequests = CommHandler.GetGameRequests();
             ListOfGameRequests = new List<GameRequest>();
@@ -59,13 +57,9 @@ namespace GameServer.Game
         /// <param name="e"></param>
         void GameRequests_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            // What was the action that caused the event?
-            //Console.WriteLine("Action for this event: {0}", e.Action);
-
-            // Something was added. 
             if (e.Action == NotifyCollectionChangedAction.Add)
             {
-                // Now show the NEW items that were inserted.
+                // Added the NEW items that were inserted.
                 foreach (GameRequest g in e.NewItems)
                 {
                     ListOfGameRequests.Add(g);
@@ -84,7 +78,7 @@ namespace GameServer.Game
         }
 
         /// <summary>
-        /// Handle all incoming <see cref="GameRequest"/>s
+        /// Handles all incoming <see cref="GameRequest"/>s
         /// </summary>
         void HandleGameRequests()
         {
@@ -95,11 +89,10 @@ namespace GameServer.Game
                     Console.WriteLine();
                     Console.WriteLine("There are requests waiting to be handled...");
                     Console.WriteLine();
-                    // Do stuff
+
                     for (int i = 0; i < ListOfGameRequests.Count; i++)
                     {
                         HandleRequest(ListOfGameRequests[i]);
-                        //Finished doing stuff
                         CompleteGameRequest(ListOfGameRequests[i]);
                     }
                 }
@@ -117,6 +110,7 @@ namespace GameServer.Game
             Console.WriteLine("Handling request type " + gameRequestToHandle.RequestType + " sent from " + gameRequestToHandle.UserFrom);
             Console.WriteLine("==================");
             Console.WriteLine();
+
             switch (gameRequestToHandle.RequestType)
             {
                 // ForwardRequest
@@ -137,29 +131,16 @@ namespace GameServer.Game
 
                 // SendPlayerCards
                 case 3:
-                    // Find Card From Deck
-                    if (gameRequestToHandle.Cardlist.Count == 0)
-                    {
-                        for (int i = 0; i < Games.Count; i++)
-                        {
-                            for (int j = 0; j < Games[i].ListOfUsers.Count; j++)
-                            {
-                                if (Games[i].ListOfUsers[j].Name == gameRequestToHandle.UserTo)
-                                {
-                                    gameRequestToHandle.Cardlist.Add(Games[i].Deck.ElementAt(0));
-                                    Games[i].Deck.RemoveAt(0);
-                                    Console.WriteLine("===");
-                                    Console.WriteLine(Games[i].Deck.Count);
-                                    Console.WriteLine("===");
-                                }
-                            }
-                        }
-                        gameRequestToHandle.UserFrom = gameRequestToHandle.UserTo;
-                    }
+                    // Fish From Deck
+                    FindCard(gameRequestToHandle);
+
+                    // Sending Gamerequest
                     gameRequestToHandle.RequestType = 2;
                     SocketHandler.Send(gameRequestToHandle);
+
                     tempGame = GetCardGame(gameRequestToHandle.UserFrom);
 
+                    // Condition to end game
                     if (tempGame.Deck.Count == 0)
                     {
                         tempGame.EndGame();
@@ -170,45 +151,22 @@ namespace GameServer.Game
                     Console.WriteLine("Request came from " + gameRequestToHandle.UserFrom);
 
                     // Set new active player if the current active player's turn ends
-                    if (gameRequestToHandle.UserFrom == tempGame.ActivePlayer)
-                    {
-                        Console.WriteLine("We're in Set Active player");
-                        tempGame.SetActivePlayer();
-
-                        GameRequest newActivePlayer = new GameRequest();
-                        newActivePlayer.UserTo = tempGame.ActivePlayer;
-                        newActivePlayer.RequestType = 1;
-
-                        Console.WriteLine("Set Active player to " + newActivePlayer.UserTo);
-                        Console.WriteLine("=========================================");
-                        Console.WriteLine("=========================================");
-                        SocketHandler.Send(newActivePlayer);
-                    }
+                    SetActivePlayer(gameRequestToHandle, tempGame);
                     break;
 
+                // Gets points from the users and find the winner
                 case 10:
                     CardGame tempCardGame = GetCardGame(gameRequestToHandle.UserFrom);
-                    tempCardGame.ScoresReceived++;
-                    for (int i = 0; i < tempCardGame.ListOfUsers.Count; i++)
-                    {
-                        if (gameRequestToHandle.UserFrom == tempCardGame.ListOfUsers[i].Name)
-                        {
-                            tempCardGame.ListOfUserPoints[i] = gameRequestToHandle.CardValue;
-                        }
-                    }
+
+                    // Sets the player points
+                    SetPlayerPoints(gameRequestToHandle, tempCardGame);
+
                     if (tempCardGame.ScoresReceived == tempCardGame.ListOfUsers.Count)
                     {
-                        int highestScoore = 0;
-                        for (int i = 0; i < tempCardGame.ListOfUsers.Count; i++)
-                        {
-                            if (tempCardGame.ListOfUserPoints[i] > tempCardGame.ListOfUserPoints[highestScoore])
-                            {
-                                highestScoore = i;
-                            }
+                        // Finding Winner From TempCardGame
+                        FindWinner(gameRequestToHandle, tempCardGame);
 
-                            gameRequestToHandle.UserFrom = tempCardGame.ListOfUsers[highestScoore].Name;
-                        }
-
+                        // Informs players of winner
                         for (int i = 0; i < tempCardGame.ListOfUsers.Count; i++)
                         {
                             gameRequestToHandle.UserTo = tempCardGame.ListOfUsers[i].Name;
@@ -220,6 +178,89 @@ namespace GameServer.Game
                     break;
             }
 
+        }
+
+        /// <summary>
+        /// Uses <see cref="CardGame.ListOfUsers"/> to find a winner based on higest points
+        /// </summary>
+        /// <param name="gameRequestToHandle"></param>
+        /// <param name="tempCardGame"></param>
+        private void FindWinner(GameRequest gameRequestToHandle, CardGame tempCardGame)
+        {
+            int highestScoore = 0;
+            for (int i = 0; i < tempCardGame.ListOfUsers.Count; i++)
+            {
+                if (tempCardGame.ListOfUserPoints[i] > tempCardGame.ListOfUserPoints[highestScoore])
+                {
+                    highestScoore = i;
+                }
+                gameRequestToHandle.UserFrom = tempCardGame.ListOfUsers[highestScoore].Name;
+            }
+        }
+
+        /// <summary>
+        /// Set points for the individual <see cref="User"/>
+        /// </summary>
+        /// <param name="gameRequestToHandle"></param>
+        /// <param name="tempCardGame"></param>
+        private void SetPlayerPoints(GameRequest gameRequestToHandle, CardGame tempCardGame)
+        {
+            tempCardGame.ScoresReceived++;
+            for (int i = 0; i < tempCardGame.ListOfUsers.Count; i++)
+            {
+                if (gameRequestToHandle.UserFrom == tempCardGame.ListOfUsers[i].Name)
+                {
+                    tempCardGame.ListOfUserPoints[i] = gameRequestToHandle.CardValue;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Sets the active <see cref="User"/>
+        /// </summary>
+        /// <param name="gameRequestToHandle"></param>
+        /// <param name="tempGame"></param>
+        private void SetActivePlayer(GameRequest gameRequestToHandle, CardGame tempGame)
+        {
+            if (gameRequestToHandle.UserFrom == tempGame.ActivePlayer)
+            {
+                tempGame.SetActivePlayer();
+
+                GameRequest newActivePlayer = new GameRequest();
+                newActivePlayer.UserTo = tempGame.ActivePlayer;
+                newActivePlayer.RequestType = 1;
+
+                Console.WriteLine("Set Active player to " + newActivePlayer.UserTo);
+                Console.WriteLine("=========================================");
+                Console.WriteLine("=========================================");
+                SocketHandler.Send(newActivePlayer);
+            }
+        }
+
+        /// <summary>
+        /// Fetch the first item in the deck and adds to a <see cref="GameRequest"/>
+        /// </summary>
+        /// <param name="gameRequestToHandle"></param>
+        private void FindCard(GameRequest gameRequestToHandle)
+        {
+            if (gameRequestToHandle.Cardlist.Count == 0)
+            {
+                for (int i = 0; i < Games.Count; i++)
+                {
+                    for (int j = 0; j < Games[i].ListOfUsers.Count; j++)
+                    {
+                        if (Games[i].ListOfUsers[j].Name == gameRequestToHandle.UserTo)
+                        {
+                            gameRequestToHandle.Cardlist.Add(Games[i].Deck.ElementAt(0));
+                            Games[i].Deck.RemoveAt(0);
+                            Console.WriteLine("===");
+                            Console.WriteLine(Games[i].Deck.Count);
+                            Console.WriteLine("===");
+                        }
+                    }
+                }
+                gameRequestToHandle.UserFrom = gameRequestToHandle.UserTo;
+            }
         }
 
         /// <summary>

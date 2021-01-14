@@ -9,7 +9,6 @@ namespace GameServer.Model
     class SetupRequest : Request
     {
         private List<string> players;
-
         public List<string> Players
         {
             get { return players; }

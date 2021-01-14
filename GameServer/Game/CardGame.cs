@@ -21,14 +21,11 @@ namespace GameServer.Game
         }
 
         private List<byte> listOfUserPoints = new List<byte>();
-
         public List<byte> ListOfUserPoints
         {
             get { return listOfUserPoints; }
             set { listOfUserPoints = value; }
         }
-
-
 
         private List<Card> deck;
         public List<Card> Deck
@@ -38,7 +35,6 @@ namespace GameServer.Game
         }
 
         private string activePlayer;
-
         public string ActivePlayer
         {
             get { return activePlayer; }
@@ -46,16 +42,13 @@ namespace GameServer.Game
         }
 
         private int scoresReceived;
-
         public int ScoresReceived
         {
             get { return scoresReceived; }
             set { scoresReceived = value; }
         }
 
-
         readonly object _lock = new object();
-
         Random rng = new Random();
 
         /// <summary>
@@ -68,18 +61,27 @@ namespace GameServer.Game
         {
             ListOfUsers = listOfPlayers;
             Deck = CardFactory.CreateDeck();
+
+            // Shuffle Deck
             Shuffle();
+
+            // Deals card
             Deal();
+
+            // Set the first player to active player
             ActivePlayer = ListOfUsers.First().Name;
 
             List<string> listOfUsernames = new List<string>();
+            UserSetup(listOfUsernames);
+            SendPlayerList(listOfUsernames);
+        }
 
-            for (int i = 0; i < ListOfUsers.Count; i++)
-            {
-                listOfUsernames.Add(ListOfUsers[i].Name);
-                listOfUserPoints.Add(0);
-            }
-
+        /// <summary>
+        /// Send a list of <see cref="User.Name"/> To all palyers in that session
+        /// </summary>
+        /// <param name="listOfUsernames"></param>
+        private void SendPlayerList(List<string> listOfUsernames)
+        {
             Thread.Sleep(1000);
             string s;
             byte[] buffer;
@@ -103,6 +105,19 @@ namespace GameServer.Game
         }
 
         /// <summary>
+        /// Setting up <see cref="User"/>'s for the game
+        /// </summary>
+        /// <param name="listOfUsernames"></param>
+        private void UserSetup(List<string> listOfUsernames)
+        {
+            for (int i = 0; i < ListOfUsers.Count; i++)
+            {
+                listOfUsernames.Add(ListOfUsers[i].Name);
+                listOfUserPoints.Add(0);
+            }
+        }
+
+        /// <summary>
         /// Reorganize the deck of <see cref="Card"/>s to simulate shuffling the cards.
         /// </summary>
         void Shuffle()
@@ -120,24 +135,6 @@ namespace GameServer.Game
                 }
             }
         }
-
-        // Outdated
-        /// <summary>
-        /// Deals 7 <see cref="Card"/>s to each player in the game, at the start of the game.
-        /// </summary>
-        //void Deal()
-        //{
-        //    for (int i = 0; i < listOfUsers.Count; i++)
-        //    {
-        //        List<Card> hand = new List<Card>();
-        //        for (int j = 0; j < 7; j++)
-        //        {
-        //            hand.Add(Deck[Deck.Count - 1]);
-        //            Deck.RemoveAt(Deck.Count - 1);
-        //        }
-        //        SendCards(listOfUsers[i], hand);
-        //    }
-        //}
 
         /// <summary>
         /// Deals 7 <see cref="Card"/>s to each player in the game, at the start of the game.
@@ -169,53 +166,8 @@ namespace GameServer.Game
         }
 
         /// <summary>
-        /// Sends 7 <see cref="Card"/>s to a player. This is the players hand.
+        /// Broadcasting end of game to all players
         /// </summary>
-        /// <param name="player"></param>
-        /// <param name="cardList"></param>
-        void SendCards(User player, List<Card> cardList)
-        {
-
-        }
-
-        /// <summary>
-        /// Start and run game
-        /// </summary>
-        /// <param name="client"></param>
-        /// <param name="byte_count"></param>
-        void StartGame(TcpClient client, int byte_count)
-        {
-            NetworkStream stream;
-            byte[] buffer;
-
-            string data;
-            GameRequest converted;
-
-            while (true)
-            {
-                stream = client.GetStream();
-                buffer = new byte[1024];
-                byte_count = stream.Read(buffer, 0, buffer.Length);
-
-                data = Encoding.UTF8.GetString(buffer, 0, byte_count);
-                converted = JsonConvert.DeserializeObject<GameRequest>(data);
-
-                Console.WriteLine("Recived game request " + converted.RequestType);
-
-                switch (converted.RequestType)
-                {
-                    case 3:
-                        Console.WriteLine("CASE 3");
-                        ReceiveCardRequest(data); // Request Card
-                        break;
-                    case 4:
-                        Console.WriteLine("CASE 4");
-                        ReceiveGiveCardRequest(data);
-                        break;
-                }
-            }
-        }
-
         public void EndGame()
         {
             GameRequest endGameRequest = new GameRequest();
@@ -227,7 +179,6 @@ namespace GameServer.Game
             s = JsonConvert.SerializeObject(endGameRequest, Formatting.Indented);
             buffer = Encoding.UTF8.GetBytes(s);
 
-
             for (int i = 0; i < ListOfUsers.Count; i++)
             {
                 endGameRequest.UserTo = ListOfUsers[i].Name;
@@ -237,54 +188,6 @@ namespace GameServer.Game
             Console.WriteLine("==============================");
             Console.WriteLine("=       Ending Game          =");
             Console.WriteLine("==============================");
-        }
-
-        /// <summary>
-        /// When an oppnent returns a card request
-        /// </summary>
-        /// <param name="data"></param>
-        private void ReceiveGiveCardRequest(string data)
-        {
-            GameRequest validateData = JsonConvert.DeserializeObject<GameRequest>(data);
-
-            GoFishRequest(validateData);
-
-            validateData.RequestType = 2;
-            data = JsonConvert.SerializeObject(validateData, Formatting.None);
-
-            byte[] buffer = Encoding.UTF8.GetBytes(data + Environment.NewLine);
-
-            SendRequest(validateData.UserTo, buffer);
-        }
-
-        /// <summary>
-        /// When a player request a card from an opponent
-        /// </summary>
-        /// <param name="data"></param>
-        private void ReceiveCardRequest(string data)
-        {
-            GameRequest validateData = ForwardReceiveCardRequest(data);
-
-            validateData.RequestType = 2;
-            data = JsonConvert.SerializeObject(validateData, Formatting.None);
-            byte[] buffer = Encoding.UTF8.GetBytes(data + Environment.NewLine);
-            SendRequest(validateData.UserTo, buffer);
-        }
-
-        /// <summary>
-        /// Sends a rquest to a player
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        private GameRequest ForwardReceiveCardRequest(string data)
-        {
-            GameRequest validateData = JsonConvert.DeserializeObject<GameRequest>(data);
-
-            byte[] buffer = Encoding.UTF8.GetBytes(data + Environment.NewLine);
-
-            SendRequest(validateData.UserTo, buffer);
-
-            return validateData;
         }
 
         /// <summary>
@@ -307,20 +210,6 @@ namespace GameServer.Game
                         break;
                     }
                 }
-            }
-        }
-
-        /// <summary>
-        /// If the <see cref="GameRequest.Cardlist"/> is empty, add top card from the <see cref="Deck"/> if there are any.
-        /// </summary>
-        /// <param name="validateData"></param>
-        private void GoFishRequest(GameRequest validateData)
-        {
-            Console.WriteLine("Fishing Card From Deck");
-            if (validateData.Cardlist.Count == 0 && Deck.Count > 0)
-            {
-                validateData.Cardlist.Add(Deck[0]);
-                Deck.RemoveAt(0);
             }
         }
 

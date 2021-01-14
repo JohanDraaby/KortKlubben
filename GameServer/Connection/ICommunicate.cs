@@ -14,8 +14,8 @@ namespace GameServer.Connection
         List<string> ConnectedDevices { get; set; }
 
         void Send(GameRequest requestToSend);
-        string Receive();
-        void CheckConnections();
-        void RemoveConnectedDevice(string ip);
+        //string Receive();
+        //void CheckConnections();
+        //void RemoveConnectedDevice(string ip);
     }
 }
