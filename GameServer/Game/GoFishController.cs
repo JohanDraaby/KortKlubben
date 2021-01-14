@@ -86,10 +86,6 @@ namespace GameServer.Game
             {
                 if (ListOfGameRequests.Count != 0)
                 {
-                    Console.WriteLine();
-                    Console.WriteLine("There are requests waiting to be handled...");
-                    Console.WriteLine();
-
                     for (int i = 0; i < ListOfGameRequests.Count; i++)
                     {
                         HandleRequest(ListOfGameRequests[i]);
@@ -105,12 +101,6 @@ namespace GameServer.Game
         /// <param name="gameRequestToHandle"></param>
         void HandleRequest(GameRequest gameRequestToHandle)
         {
-            Console.WriteLine();
-            Console.WriteLine("==================");
-            Console.WriteLine("Handling request type " + gameRequestToHandle.RequestType + " sent from " + gameRequestToHandle.UserFrom);
-            Console.WriteLine("==================");
-            Console.WriteLine();
-
             switch (gameRequestToHandle.RequestType)
             {
                 // ForwardRequest
@@ -146,9 +136,6 @@ namespace GameServer.Game
                         tempGame.EndGame();
                         break;
                     }
-
-                    Console.WriteLine("The active player now is " + tempGame.ActivePlayer);
-                    Console.WriteLine("Request came from " + gameRequestToHandle.UserFrom);
 
                     // Set new active player if the current active player's turn ends
                     SetActivePlayer(gameRequestToHandle, tempGame);
@@ -229,10 +216,6 @@ namespace GameServer.Game
                 GameRequest newActivePlayer = new GameRequest();
                 newActivePlayer.UserTo = tempGame.ActivePlayer;
                 newActivePlayer.RequestType = 1;
-
-                Console.WriteLine("Set Active player to " + newActivePlayer.UserTo);
-                Console.WriteLine("=========================================");
-                Console.WriteLine("=========================================");
                 SocketHandler.Send(newActivePlayer);
             }
         }
@@ -253,9 +236,6 @@ namespace GameServer.Game
                         {
                             gameRequestToHandle.Cardlist.Add(Games[i].Deck.ElementAt(0));
                             Games[i].Deck.RemoveAt(0);
-                            Console.WriteLine("===");
-                            Console.WriteLine(Games[i].Deck.Count);
-                            Console.WriteLine("===");
                         }
                     }
                 }

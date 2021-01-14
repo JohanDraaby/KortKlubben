@@ -85,7 +85,7 @@ namespace GameServer
                     Thread.Sleep(1000);
 
                     // Start game when there are two connected clients.
-                    if (handler.GetClients().Count >= 2)
+                    if (handler.GetClients().Count >= 3)
                     {
                         clientList = handler.GetClients();
                         gfc.NewGame(clientList);
